@@ -1,4 +1,4 @@
-import subprocess 
+import subprocess
 import sys
 import re
 import string
@@ -8,7 +8,6 @@ import itertools
 import matplotlib.pyplot as plt
 import numpy
 from mpltools import style
-from mpltools import layout
 
 PDFTOTEXT_COMMAND = "pdftotext"
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -29,6 +28,9 @@ JUSTICES = []
 for justice in JUSTICE_NAMES:
     JUSTICES.append(nameparser.HumanName(justice.upper()))
 
+logging.addLevelName( logging.WARNING, "\033[1;31m%s\033[1;0m" % logging.getLevelName(logging.WARNING))
+logging.addLevelName( logging.ERROR, "\033[1;41m%s\033[1;0m" % logging.getLevelName(logging.ERROR))
+
 
 def pairwise(iterable):
     "s -> (s0,s1), (s1,s2), (s2, s3), ..."
@@ -44,7 +46,7 @@ def getTextFromPDF(filename):
     if result:
         log.info("Got text from PDF")
     return result
-    
+
 
 def get_transcript_from_PDF(filename):
     log = logging.getLogger('PARSE_TRANSCRIPT');
@@ -67,7 +69,7 @@ def get_petitioners_and_respondents(text):
     log = logging.getLogger('GET_PET_AND_RES');
     log.info("Attempting to find petitioners and respondents...");
     # Find portion of transcript detailing who appears in the court.
-    start = text.find('APPEARANCES:') + len('APPEARANCES:') 
+    start = text.find('APPEARANCES:') + len('APPEARANCES:')
     end = text.find('C O N T E N T S')
     if end == -1:
         end = text.find('CONTENTS')
@@ -76,21 +78,21 @@ def get_petitioners_and_respondents(text):
     if end == -1:
         end = text.find('P R O C E E D')
     if end == -1:
-        end = text.find('CHIEF') 
+        end = text.find('CHIEF')
     names_text = text[start:end].strip()
 
     # Regex to match names including lowercase c for Mc-names and apostrophe for O'-names and r for "Jr."
     # Assumes names are completely capitalized and end with a comma (not matched)
     names_pattern = re.compile(r"([A-Zrc',\.\ ]+),\ ")
     names = names_pattern.findall(names_text)
-    log.info("Found %d names:" % len(names)) 
+    log.info("Found %d names:" % len(names))
     log.info("Name strings: %s" % names)
     full_names = []
     for name in names:
         full_names.append(nameparser.HumanName(name))
-        
+
     log.info("First and last from parse: %s" % [name.first + " " + name.last for name in full_names])
-        
+
     petitioners = []
     respondents = []
 
@@ -109,7 +111,7 @@ def get_petitioners_and_respondents(text):
         res = False
 
 
-        # We now search within the two names for "petitioner or respondent" 
+        # We now search within the two names for "petitioner or respondent"
         if any(search in names_text[start:end] for search in pet_names):
             # He/She is a petitioner
             pet = True
@@ -120,7 +122,7 @@ def get_petitioners_and_respondents(text):
         if pet and res:
             log.error("You've got an advocate who represents both sides!")
         if pet:
-            petitioners.append(full_name) 
+            petitioners.append(full_name)
         if res:
             respondents.append(full_name)
         if not res and not pet:
@@ -129,11 +131,11 @@ def get_petitioners_and_respondents(text):
 
 
     log.info("Petitioners are: %s" % [petitioner.last for petitioner in petitioners])
-    log.info("Respondents are: %s" % [respondent.last for respondent in respondents])  
+    log.info("Respondents are: %s" % [respondent.last for respondent in respondents])
 
 
     return petitioners, respondents
-    
+
 
 
 def get_argument(text):
@@ -162,7 +164,7 @@ def get_arguments_by_advocate(petitioners,respondents,argument_text):
     log.info("Attempting to isolate argument sections for each advocate")
     arguments_pattern = re.compile(r"ARGUMENT OF ([A-Zrc'\ \.]+)")
     arguments = arguments_pattern.finditer(argument_text)
-        
+
     petitioner_arguments = {}
     respondent_arguments = {}
     for argument, next_argument in pairwise(itertools.chain(arguments,[None])):
@@ -219,7 +221,7 @@ def get_statements_in_argument(argument_text, arguer_name):
         statements[justice] = []
     speakers.append(arguer_name)
     statements[arguer_name] = []
-    
+
 
     for statement, next_statement in pairwise(itertools.chain(statement_matches,[None])):
         start = statement.end()
@@ -241,7 +243,7 @@ def get_statements_in_argument(argument_text, arguer_name):
 
         if not found:
                 log.warning("Couldn't assign %s to a known speaker" % statement.group())
-    
+
     return statements
 
 
@@ -254,7 +256,7 @@ def get_statistics_from_statements(grouping_of_statements):
         print "Number of statements: %d " % len(statements)
         all_words =[]
         for statement in statements:
-            words = get_words_from_string(statement) 
+            words = get_words_from_string(statement)
             all_words.extend(words)
 
         print "Number of words: %d" % len(all_words)
@@ -267,7 +269,7 @@ def get_statistics_from_statements(grouping_of_statements):
 def get_words_from_string(statement, exclude_stopwords=True):
     # Remove punctuation in string
     statement = statement.translate(string.maketrans("",""), string.punctuation)
-    # Split into list of words 
+    # Split into list of words
     words = statement.split()
     if exclude_stopwords:
         from nltk.corpus import stopwords
@@ -275,6 +277,8 @@ def get_words_from_string(statement, exclude_stopwords=True):
         # Remove words from list if they are stopwords
         words = [word.lower() for word in words if word.lower() not in stopwords]
     return words
+
+
 
 
 def get_number_of_words_per_speaker(grouping_of_statements):
@@ -288,12 +292,12 @@ def get_number_of_words_per_speaker(grouping_of_statements):
         num_of_words_per_speaker.append((speaker, len(all_words)))
 
     return num_of_words_per_speaker
-    
+
 
 def get_plot_number_of_words_per_speaker(num_words, ignore_petitioner=False, petitioner=None):
-    """Plot a number of words per speaker. 
+    """Plot a number of words per speaker.
     num_words is a list of tuples of (speaker, num_words_for_speaker)
-    
+
     One can pass in a petitioner to ignore for plotting convenience.
     """
 
@@ -322,7 +326,7 @@ def get_plot_number_of_statements_per_speaker(grouping_of_statements, ignore_pet
     return plot
 
 
-    
+
 
 def get_plot_names_and_numbers(names, numbers, x_label=None, title=None):
     style.use('ggplot')
@@ -332,8 +336,6 @@ def get_plot_names_and_numbers(names, numbers, x_label=None, title=None):
     plt.xlabel(x_label)
     plt.title(title)
     return plt
-
-
 
 
 
@@ -350,15 +352,8 @@ if __name__ == "__main__":
                 statements = get_statements_in_argument(argument, petitioner)
                 get_statistics_from_statements(statements)
                 number_of_words_per_speaker = get_number_of_words_per_speaker(statements)
-                nwsplot = get_plot_number_of_words_per_speaker(number_of_words_per_speaker, ignore_petitioner=True, petitioner=petitioner)
-                nwsplot.show()
-                niaplot = get_plot_number_of_statements_per_speaker(statements,ignore_petitioner=True, petitioner=petitioner)
-                niaplot.show()
 
-                
             for respondent,argument in arguments_by_advocate["respondent"].iteritems():
-                statements = get_statements_in_argument(argument, respondent)
+                pass
+                #statements = get_statements_in_argument(argument, respondent)
                 #print statements
-
-
-
