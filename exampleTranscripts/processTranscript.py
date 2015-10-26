@@ -42,9 +42,11 @@ def getTextFromPDF(filename):
     log = logging.getLogger('PDF_TO_TEXT');
     log.info("Getting text from PDF")
     # dependent on age of transcript, we may have to adjust the cropping later on
-    result = subprocess.check_output([PDFTOTEXT_COMMAND+" -enc Latin1 -layout -x 130 -y 80 -W 1050 -H 670 "+filename+" -"],shell=True)
+    result = subprocess.check_output([PDFTOTEXT_COMMAND+" -enc UTF-8 -layout -x 130 -y 80 -W 1050 -H 670 "+filename+" -"],shell=True)
     if result:
         log.info("Got text from PDF")
+    # Turn unicode characters into something useful.
+    result = result.decode('utf8').replace(u"\xa0", " ").replace(u"\xad", "-").encode('ascii')
     return result
 
 
@@ -223,6 +225,7 @@ def get_statements_in_argument(argument_text, arguer_name):
     statements[arguer_name] = []
 
 
+    interrupted = False
     for statement, next_statement in pairwise(itertools.chain(statement_matches,[None])):
         start = statement.end()
         if next_statement:
@@ -231,6 +234,7 @@ def get_statements_in_argument(argument_text, arguer_name):
             log.info("Finished looking for statements")
             end = len(argument_text)
 
+
         #log.info("Statement is: %s" % argument_text[start:start+50] + "... ")
         found = False
         for speaker in speakers:
@@ -238,7 +242,15 @@ def get_statements_in_argument(argument_text, arguer_name):
                 #log.info("Found %s, assigned to %s" % (statement.group(), speaker))
                 processed_statement = argument_text[start:end].strip()
                 processed_statement = " ".join([line.strip() for line in processed_statement.splitlines() if line.strip()])
+                if interrupted:
+                    processed_statement = "@$" + processed_statement
                 statements[speaker].append(processed_statement)
+                interrupted = False
+                if processed_statement.endswith("--"):
+                    # set the flag so the next speaker gets marked as an
+                    # interruptor
+                    interrupted = True
+
                 found = True
 
         if not found:
@@ -255,10 +267,26 @@ def get_statistics_from_statements(grouping_of_statements):
         print "-"*60
         print "Number of statements: %d " % len(statements)
         all_words =[]
+        interrupt_number = 0
+        dunno = 0
+        why = 0
+        wrong = 0
         for statement in statements:
             words = get_words_from_string(statement)
             all_words.extend(words)
+            if "don't know" in statement:
+                dunno = dunno + 1
+            if "why" in statement:
+                why = why + 1
+            if "@$" in statement:
+                interrupt_number = interrupt_number + 1
+            if "wrong" in statement:
+                wrong = wrong + 1
 
+        print "Number of interruptions: %d" % interrupt_number
+        print "Number of dunnos: %d" % dunno
+        print "Number of whys: %d" % why
+        print "Number of wrongs: %d" % why
         print "Number of words: %d" % len(all_words)
         import nltk
         fdist = nltk.FreqDist(all_words)
@@ -327,7 +355,6 @@ def get_plot_number_of_statements_per_speaker(grouping_of_statements, ignore_pet
 
 
 
-
 def get_plot_names_and_numbers(names, numbers, x_label=None, title=None):
     style.use('ggplot')
     y_positions = numpy.arange(len(names))
@@ -355,5 +382,5 @@ if __name__ == "__main__":
 
             for respondent,argument in arguments_by_advocate["respondent"].iteritems():
                 pass
-                #statements = get_statements_in_argument(argument, respondent)
-                #print statements
+                statements = get_statements_in_argument(argument, respondent)
+                get_statistics_from_statements(statements)
