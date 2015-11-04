@@ -21,3 +21,5 @@ JUSTICE_CODES = {
     "Sonia M. Sotomayor": "SOTO",
     "Elena Kagan": "KAG"
 }
+
+

@@ -4,9 +4,11 @@ import numpy
 import nltk
 import nameparser
 import logging
-from collections import Counter
+from collections import Counter, OrderedDict
 from mpltools import style
 from justices import JUSTICE_NAMES, JUSTICE_CODES
+import features
+import martin_quinn
 
 JUSTICES = []
 CODES = {}
@@ -20,6 +22,26 @@ logging.addLevelName(logging.WARNING, "\033[1;31m%s\033[1;0m" % logging.getLevel
 logging.addLevelName(logging.ERROR, "\033[1;41m%s\033[1;0m" % logging.getLevelName(logging.ERROR))
 
 
+def normalize_feature_list(flattened_features):
+    log = logging.getLogger('NRMLZE_FEATS')
+    feature_codes = features.get_all_feature_codes()
+    feature_keys = list(flattened_features.keys())
+    for code in feature_codes:
+        if code not in feature_keys:
+            flattened_features[code] = 0
+    for name, code in JUSTICE_CODES.iteritems():
+        flattened_features[code + "_MQSCORE"] = martin_quinn.mq_scores[code]
+
+    log.info("Normalized to %d features" % len(flattened_features))
+    return OrderedDict(sorted(flattened_features.iteritems()))
+
+
+def get_feature_vector(ordered_features):
+    vector = []
+    for item in ordered_features.items():
+        vector.append(item[1])
+    return vector
+
 
 def flatten_features(features_from_speakers):
     log = logging.getLogger('FLATTEN_FEATS')
@@ -30,6 +52,8 @@ def flatten_features(features_from_speakers):
                 flattened_features[CODES[speaker.last] + "_" + f] = v
 
     log.info("Num of flattened: %d" % len(flattened_features))
+
+    return flattened_features
 
 
 def get_features_from_statements(grouping_of_statements):

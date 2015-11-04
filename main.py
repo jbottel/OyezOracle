@@ -23,3 +23,5 @@ if __name__ == "__main__":
                 number_of_words_per_speaker = scores.get_number_of_words_per_speaker(statements)
                 features = scores.get_features_from_statements(statements)
                 flat_features = scores.flatten_features(features)
+                normalized = scores.normalize_feature_list(flat_features)
+                print scores.get_feature_vector(normalized)
