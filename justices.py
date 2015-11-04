@@ -1,14 +1,14 @@
 JUSTICE_NAMES = [
-        "John G. Roberts, Jr.",
-        "Antonin G. Scalia",
-        "Anthony M. Kennedy",
-        "Clarence Thomas",
-        "Ruth Bader Ginsburg",
-        "Stephen G. Breyer",
-        "Samuel A. Alito",
-        "Sonia M. Sotomayor",
-        "Elena Kagan"
-        ]
+    "John G. Roberts, Jr.",
+    "Antonin G. Scalia",
+    "Anthony M. Kennedy",
+    "Clarence Thomas",
+    "Ruth Bader Ginsburg",
+    "Stephen G. Breyer",
+    "Samuel A. Alito",
+    "Sonia M. Sotomayor",
+    "Elena Kagan"
+]
 
 JUSTICE_CODES = {
     "ROBT": "John G. Roberts, Jr.",

@@ -14,8 +14,10 @@ if __name__ == "__main__":
                 statements = transcript.get_statements_in_argument(argument, petitioner)
                 scores.get_statistics_from_statements(statements)
                 number_of_words_per_speaker = scores.get_number_of_words_per_speaker(statements)
+                print scores.get_features_from_statements(statements)
 
             for respondent, argument in arguments_by_advocate["respondent"].iteritems():
                 statements = transcript.get_statements_in_argument(argument, respondent)
                 scores.get_statistics_from_statements(statements)
                 number_of_words_per_speaker = scores.get_number_of_words_per_speaker(statements)
+                print scores.get_features_from_statements(statements)

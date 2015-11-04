@@ -8,8 +8,9 @@ from mpltools import style
 
 def get_features_from_statements(grouping_of_statements):
     num_of_words_per_speaker = []
-    feature_list = []
+    features_for_speakers = {}
     for speaker, statements in grouping_of_statements.iteritems():
+        features_for_speakers[speaker] = {}
         all_words = []
         interrupt_number = 0
         dunno = 0
@@ -27,15 +28,27 @@ def get_features_from_statements(grouping_of_statements):
             if "wrong" in statement:
                 wrong = wrong + 1
 
+        if len(statements) != 0:
+            avg_words = len(all_words) / len(statements)
+        else:
+            avg_words = 0
+
         print "Identifying parts of speech. . ."
         tags = nltk.pos_tag(all_words)
-        counts = Counter(tag for word, tag in tags)
+        counts = dict(Counter(tag for word, tag in tags))
         print "Parts of Speech: %s" % counts
         num_of_words_per_speaker.append((speaker, len(all_words)))
 
-        feature_list.append("cow")
+        features_for_speakers[speaker]["NUMSTM"] = len(statements)
+        features_for_speakers[speaker]["AVGWRD"] = avg_words
+        features_for_speakers[speaker]["NUMINTR"] = interrupt_number
+        features_for_speakers[speaker]["NUMDK"] = dunno
+        features_for_speakers[speaker]["NUMWHY"] = why
+        features_for_speakers[speaker]["NUMWNG"] = wrong
 
-    return num_of_words_per_speaker
+        features_for_speakers[speaker] = dict(features_for_speakers[speaker].items() + counts.items())
+
+    return features_for_speakers
 
 
 def get_statistics_from_statements(grouping_of_statements):
@@ -61,7 +74,11 @@ def get_statistics_from_statements(grouping_of_statements):
                 interrupt_number = interrupt_number + 1
             if "wrong" in statement:
                 wrong = wrong + 1
-
+        if len(statements) != 0:
+            avg_words = len(all_words) / len(statements)
+        else:
+            avg_words = 0
+        print "Average # of words per statement: %d" % avg_words
         print "Number of interruptions: %d" % interrupt_number
         print "Number of dunnos: %d" % dunno
         print "Number of whys: %d" % why
