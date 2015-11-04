@@ -4,21 +4,10 @@ import re
 import logging
 import nameparser
 import itertools
+from justices import JUSTICE_NAMES
 
 PDFTOTEXT_COMMAND = "pdftotext"
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-
-JUSTICE_NAMES = [
-        "John G. Roberts, Jr.",
-        "Antonin G. Scalia",
-        "Anthony M. Kennedy",
-        "Clarence Thomas",
-        "Ruth Bader Ginsburg",
-        "Stephen G. Breyer",
-        "Samuel A. Alito",
-        "Sonia M. Sotomayor",
-        "Elena Kagan"
-        ]
 
 JUSTICES = []
 for justice in JUSTICE_NAMES:
