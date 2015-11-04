@@ -2,11 +2,38 @@ import string
 import matplotlib.pyplot as plt
 import numpy
 import nltk
+import nameparser
+import logging
 from collections import Counter
 from mpltools import style
+from justices import JUSTICE_NAMES, JUSTICE_CODES
+
+JUSTICES = []
+CODES = {}
+for justice in JUSTICE_NAMES:
+    name = nameparser.HumanName(justice.upper())
+    CODES[name.last] = JUSTICE_CODES[justice]
+    JUSTICES.append(name)
+
+
+logging.addLevelName(logging.WARNING, "\033[1;31m%s\033[1;0m" % logging.getLevelName(logging.WARNING))
+logging.addLevelName(logging.ERROR, "\033[1;41m%s\033[1;0m" % logging.getLevelName(logging.ERROR))
+
+
+
+def flatten_features(features_from_speakers):
+    log = logging.getLogger('FLATTEN_FEATS')
+    flattened_features = {}
+    for speaker, features in features_from_speakers.iteritems():
+        if speaker.last in CODES:
+            for f, v in features.iteritems():
+                flattened_features[CODES[speaker.last] + "_" + f] = v
+
+    log.info("Num of flattened: %d" % len(flattened_features))
 
 
 def get_features_from_statements(grouping_of_statements):
+    log = logging.getLogger('FEATS_FR_SMNT')
     num_of_words_per_speaker = []
     features_for_speakers = {}
     for speaker, statements in grouping_of_statements.iteritems():
@@ -33,10 +60,9 @@ def get_features_from_statements(grouping_of_statements):
         else:
             avg_words = 0
 
-        print "Identifying parts of speech. . ."
+        log.info("Identifying features for " + speaker.last)
         tags = nltk.pos_tag(all_words)
         counts = dict(Counter(tag for word, tag in tags))
-        print "Parts of Speech: %s" % counts
         num_of_words_per_speaker.append((speaker, len(all_words)))
 
         features_for_speakers[speaker]["NUMSTM"] = len(statements)

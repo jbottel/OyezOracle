@@ -11,13 +11,13 @@ JUSTICE_NAMES = [
 ]
 
 JUSTICE_CODES = {
-    "ROBT": "John G. Roberts, Jr.",
-    "SCAL": "Antonin G. Scalia",
-    "KEN": "Anthony M. Kennedy",
-    "THOM": "Clarence Thomas",
-    "GIN": "Ruth Bader Ginsburg",
-    "BRY": "Stephen G. Breyer",
-    "ALTO": "Samuel A. Alito",
-    "SOTO": "Sonia M. Sotomayor",
-    "KAG": "Elena Kagan"
+    "John G. Roberts, Jr.": "ROBT",
+    "Antonin G. Scalia": "SCAL",
+    "Anthony M. Kennedy": "KEN",
+    "Clarence Thomas": "THOM",
+    "Ruth Bader Ginsburg": "GIN",
+    "Stephen G. Breyer": "BRY",
+    "Samuel A. Alito": "ALTO",
+    "Sonia M. Sotomayor": "SOTO",
+    "Elena Kagan": "KAG"
 }
