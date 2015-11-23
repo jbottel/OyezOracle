@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>OyezOracle</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="static/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="static/css/theme.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body role="document">
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">OyezOracle</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+						<li><a href="http://github.com/jbottel/OyezOracle">Source Code</a></li>
+					</ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container theme-showcase" role="main">
+
+      
+      <div class="page-header">
+        <h1>OyezOracle - Predicting the U.S. Supreme Court</h1>
+      </div>
+			<div class="row">
+				<div class="col-md-4">
+			<img src="static/supremecourt.jpg" class="img-responsive inline-block" >
+				</div>
+				<div class="col-md-8">
+					<p>What is OyezOracle?</p>
+			<p>OyezOracle is software package that predicts the actions of the U.S. Supreme Court by utilizing machine learning driven by neural networks. It has been trained to examine the minds of justices
+			of the court since its most recent change, with the introduction of Justice Elena Kagan in 2010. </p>
+
+			<p>So far, the software is capable of identifying important features and transcripts and is currently being trained from cases ranging from 2010-2014. Once properly trained, the predictive model will be used to make predictions for the cases heard in 2015.</p>
+	</div>
+			<div class="clearfix"></div>
+		<hr>
+		<h2>Make a Prediction!</h2>
+      <div class="row">
+			<div class="col-md-6">
+				<p>Select from popular cases to predict.</p>
+				<ul class="list-group">
+					<a class="list-group-item" href="/predict/14-556">
+						<h4 class="list-group-item-heading">Obergefell v. Hodges </h4>
+						<p class="list-group-item-text">This well-known case decided in 2015 involved state laws outlawing same-sex marriage. </p>
+							<span class="label label-default">Decided</span>
+							<span class="label label-danger">Incorrect Prediction</span>
+						</a>
+					<a class="list-group-item" href="/predict/14-114">
+              <h4 class="list-group-item-heading">King v. Burwell</h4>
+							<p class="list-group-item-text">Famous for Justice Roberts' suprise decision, this case decided the fate of the Affordable Care Act in 2015.</p>
+							<span class="label label-default">Decided</span>
+							<span class="label label-success">Correct Prediction</span>
+						</a>
+					<a class="list-group-item" href="/predict/12-307">
+              <h4 class="list-group-item-heading">United States v. Windsor</h4>
+              <p class="list-group-item-text">A case dealing with the United States "Defense of Marriage Act"</p>
+							<span class="label label-default">Decided</span>
+							<span class="label label-success">Correct Prediction</span>
+						</a>
+					<a class="list-group-item" href="/predict/14-7955">
+              <h4 class="list-group-item-heading">Glossip v. Gross</h4>
+              <p class="list-group-item-text">Can states use a drug linked to botched executions to carry out the death sentence?</p>
+							<span class="label label-default">Decided</span>
+							<span class="label label-success">Correct Prediction</span>
+						</a>
+				</ul>
+			</div>
+			<div class="col-md-6">
+				<p>Select from popular cases to predict.</p>
+				<ul class="list-group">
+										<a class="list-group-item" href="/predict/13-132">
+              <h4 class="list-group-item-heading">Riley v. California</h4>
+							<p class="list-group-item-text">Do police need warrants to search the cell phones of people they arrest?</p>
+							<span class="label label-default">Decided</span>
+							<span class="label label-danger">Incorrect Prediction</span>
+						</a>
+					<a class="list-group-item" href="/predict/13-461">
+              <h4 class="list-group-item-heading">ABC v. Aereo</h4>
+              <p class="list-group-item-text">Can broadcast television signals be rebroadcast over the internet?</p>
+							<span class="label label-default">Decided</span>
+							<span class="label label-danger">Incorrect Prediction</span>
+						</a>
+					<a class="list-group-item" href="/predict/12-696">
+              <h4 class="list-group-item-heading">Town of Greece v. Galloway</h4>
+              <p class="list-group-item-text">Can the town board start their meetings with a sectarian prayer?</p>
+							<span class="label label-default">Decided</span>
+							<span class="label label-danger">Incorrect Prediction</span>
+						</a>
+					<a class="list-group-item" href="/predict/13-354">
+						<h4 class="list-group-item-heading">Burwell v. Hobby Lobby Stores</h4>
+						<p class="list-group-item-text">A challenge to the provision of the Affordable Care Act mandating contraceptive coverage</p>
+							<span class="label label-default">Decided</span>
+							<span class="label label-success">Correct Prediction</span>
+						</a>
+
+				</ul>
+			</div>
+
+				</div>
+      
+
+	<h2>How it Works</h2>
+      <div class="row">
+        <div class="col-sm-8">
+					<p>OyezOracle is based on the idea of <a href="http://en.wikipedia.org/wiki/Neural_Network">Neural Networks</a> and 
+						<a href="http://en.wikipedia.org/wiki/Machine_Learning">Machine Learning</a>. In these ways, computers can do things
+						that humans cannot -- that is, make predictions, or classifications on sets of data that would be too intricate
+						or too detailed for humans to derive a pattern from.</p>
+
+					<ul>
+						<li>Correctly predicts around 60% of cases.</li>
+						<li>Parses entire oral argument transcripts for information</li>
+						<li>No outside historical data or other inputs are used (other than to confirm a prediction)</li>
+					</ul>
+				</div>
+
+        
+
+      </div>
+
+
+	<h2>Why Do This?</h2>
+	<p>To be the first to know, of course. The Supreme Court is often forgotten as being a very powerful branch of the U.S. Government, and gets tends to get less attention than the legislature or the executive.. This software is designed to improve the amount of interest in the Supreme Court, since humans love to bet on things.</p>
+      
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+  </body>
+</html>

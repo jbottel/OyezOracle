@@ -24,11 +24,17 @@ logging.addLevelName(logging.ERROR, "\033[1;41m%s\033[1;0m" % logging.getLevelNa
 
 def normalize_feature_list(flattened_features):
     log = logging.getLogger('NRMLZE_FEATS')
+
+    # Add any feature codes that weren't extracted
+    # to ensure that the finalized score vector
+    # will be consistent across cases.
     feature_codes = features.get_all_feature_codes()
     feature_keys = list(flattened_features.keys())
     for code in feature_codes:
         if code not in feature_keys:
             flattened_features[code] = 0
+
+    # Add the justice's martin quinn scores
     for name, code in JUSTICE_CODES.iteritems():
         flattened_features[code + "_MQSCORE"] = martin_quinn.mq_scores[code]
 
@@ -46,9 +52,9 @@ def get_feature_vector(ordered_features):
 def flatten_features(features_from_speakers):
     log = logging.getLogger('FLATTEN_FEATS')
     flattened_features = {}
-    for speaker, features in features_from_speakers.iteritems():
+    for speaker, feats in features_from_speakers.iteritems():
         if speaker.last in CODES:
-            for f, v in features.iteritems():
+            for f, v in feats.iteritems():
                 flattened_features[CODES[speaker.last] + "_" + f] = v
 
     log.info("Num of flattened: %d" % len(flattened_features))
@@ -137,9 +143,9 @@ def get_statistics_from_statements(grouping_of_statements):
         fdist = nltk.FreqDist(all_words)
         print "Most commonly used words: %s" % fdist.most_common(3)
         print "Identifying parts of speech. . ."
-        tags = nltk.pos_tag(all_words)
-        counts = Counter(tag for word, tag in tags)
-        print "Parts of Speech: %s" % counts
+        #tags = nltk.pos_tag(all_words)
+        #counts = Counter(tag for word, tag in tags)
+        #print "Parts of Speech: %s" % counts
         num_of_words_per_speaker.append((speaker, len(all_words)))
     return num_of_words_per_speaker
 
@@ -168,6 +174,34 @@ def get_number_of_words_per_speaker(grouping_of_statements):
             num_of_words_per_speaker.append((speaker, len(all_words)))
 
     return num_of_words_per_speaker
+
+def bar_chart_speaker(grouping_of_statements):
+    num_of_words_per_speaker = []
+    labels = []
+    data = []
+    for speaker, statements in grouping_of_statements.iteritems():
+        if speaker.last not in [
+            'ALITO', 'ROBERTS', 'SCALIA', 'KENNEDY', 'KAGAN', 'THOMAS', 'GINSBURG', 'BREYER', 'SOTOMAYOR']:
+            continue
+        all_words = []
+        labels.append(speaker.last)
+        for statement in statements:
+            words = get_words_from_string(statement)
+            all_words.extend(words)
+            # Append a tuple of (speaker, number_of_words) to list
+        data.append(len(all_words))
+    final_data = {
+        "labels" : labels,
+        "datasets": [{
+            "label": "Words Spoken",
+            "fillColor": "rgba(151,187,205,0.5)",
+            "strokeColor": "rgba(151,187,205,0.8)",
+            "highlightFill": "rgba(151,187,205,0.75)",
+            "highlightStroke": "rgba(151,187,205,1)",
+            "data": data
+        }]
+    }
+    return {'bardata': final_data}
 
 
 def get_plot_number_of_words_per_speaker(num_words, ignore_petitioner=False, petitioner=None):

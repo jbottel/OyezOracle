@@ -13,8 +13,8 @@ JUSTICES = []
 for justice in JUSTICE_NAMES:
     JUSTICES.append(nameparser.HumanName(justice.upper()))
 
-logging.addLevelName(logging.WARNING, "\033[1;31m%s\033[1;0m" % logging.getLevelName(logging.WARNING))
-logging.addLevelName(logging.ERROR, "\033[1;41m%s\033[1;0m" % logging.getLevelName(logging.ERROR))
+#logging.addLevelName(logging.WARNING, "\033[1;31m%s\033[1;0m" % logging.getLevelName(logging.WARNING))
+#logging.addLevelName(logging.ERROR, "\033[1;41m%s\033[1;0m" % logging.getLevelName(logging.ERROR))
 
 
 def pairwise(iterable):
@@ -34,7 +34,9 @@ def getTextFromPDF(filename):
     if result:
         log.info("Got text from PDF")
     # Turn unicode characters into something useful.
-    result = result.decode('utf8').replace(u"\xa0", " ").replace(u"\xad", "-").encode('ascii')
+    result = result.decode('utf8').replace(u"\xa0", " ").replace(u"\xad", "-").replace(u"\u2019", "'")
+    result = ''.join([i if ord(i) < 128 else '' for i in result])
+    result = result.encode('ascii')
     return result
 
 
@@ -68,18 +70,26 @@ def get_petitioners_and_respondents(text):
     if end == -1:
         end = text.find('P R O C E E D')
     if end == -1:
+        end = text.find('ORAL ARGUMENT OF')
+    if end == -1:
         end = text.find('CHIEF')
     names_text = text[start:end].strip()
 
     # Regex to match names including lowercase c for Mc-names and apostrophe for O'-names and r for "Jr."
     # Assumes names are completely capitalized and end with a comma (not matched)
-    names_pattern = re.compile(r"([A-Zrc',\.\ ]+),\ ")
+    names_pattern = re.compile(r"([A-Z\-reci',\.\ ]{4,}),\ .*")
     names = names_pattern.findall(names_text)
     log.info("Found %d names:" % len(names))
     log.info("Name strings: %s" % names)
     full_names = []
     for name in names:
-        full_names.append(nameparser.HumanName(name))
+        np = nameparser.HumanName(name)
+        exists = False
+        for full_name in full_names:
+            if np.last == full_name.last:
+                exists = True
+        if not exists:
+            full_names.append(nameparser.HumanName(name))
 
     log.info("First and last from parse: %s" % [name.first + " " + name.last for name in full_names])
 
@@ -109,13 +119,19 @@ def get_petitioners_and_respondents(text):
             res = True
 
         if pet and res:
-            log.error("You've got an advocate who represents both sides!")
+            log.warning("You've got an advocate who represents both sides!")
         if pet:
-            petitioners.append(full_name)
+            if full_name not in petitioners:
+                petitioners.append(full_name)
+            else:
+                log.info("Already in list.")
         if res:
-            respondents.append(full_name)
+            if full_name not in respondents:
+                respondents.append(full_name)
+            else:
+                log.info("Already in list.")
         if not res and not pet:
-            log.info("Undetermined amicus curiae: %s" % full_name.last)
+            log.warning("Couldn't assign an amicus to a side: %s" % full_name.last)
 
     log.info("Petitioners are: %s" % [petitioner.last for petitioner in petitioners])
     log.info("Respondents are: %s" % [respondent.last for respondent in respondents])
@@ -132,6 +148,12 @@ def get_argument(text):
     if start == -1:
         start = text.find("We'll now hear")
     if start == -1:
+        start = text.find("We'll hear")
+    if start == -1:
+        start = text.find("this morning in")
+    if start == -1:
+        start = text.find(" a.m.)")
+    if start == -1:
         start = 0
     end = text.rfind('Whereupon')
     if end == -1:
@@ -139,8 +161,10 @@ def get_argument(text):
     if end == -1:
         end = text.rfind('Short break')
     if end == -1:
+        end = text.rfind('Thank you, counsel')
+    if end == -1:
         log.error("Could not parse argument section from transcript.")
-        return text
+        return text[start:]
     log.info("Successfully isolated argument from transcript")
     return text[start:end]
 
@@ -148,7 +172,7 @@ def get_argument(text):
 def get_arguments_by_advocate(petitioners, respondents, argument_text):
     log = logging.getLogger('GET_ARG_BY_ADV')
     log.info("Attempting to isolate argument sections for each advocate")
-    arguments_pattern = re.compile(r"ARGUMENT OF ([A-Zrc'\ \.]+)")
+    arguments_pattern = re.compile(r"ARGUMENT OF ([A-Zreci'\ \.]{4,30})")
     arguments = arguments_pattern.finditer(argument_text)
 
     petitioner_arguments = {}
@@ -167,7 +191,7 @@ def get_arguments_by_advocate(petitioners, respondents, argument_text):
         res = False
 
         for petitioner in petitioners:
-            if petitioner.last and petitioner.first in argument.group():
+            if petitioner.last in argument.group():
                 log.info("Assigning %d:%d to petitioner: %s" % (start, end, petitioner))
                 if petitioner in petitioner_arguments:
                     petitioner_arguments[petitioner] += argument_text[start:end]
@@ -176,7 +200,9 @@ def get_arguments_by_advocate(petitioners, respondents, argument_text):
                 pet = True
 
         for respondent in respondents:
-            if respondent.last and respondent.first in argument.group():
+            # for more restrictive assignment
+            # add name.first
+            if respondent.last in argument.group():
                 log.info("Assigning %d:%d to respondent: %s" % (start, end, respondent))
                 if respondent in respondent_arguments:
                     respondent_arguments[respondent] += argument_text[start:end]
@@ -185,10 +211,10 @@ def get_arguments_by_advocate(petitioners, respondents, argument_text):
                 res = True
 
         if pet and res:
-            log.error("You've got an argument assigned to both respondents and petitioners!")
+            log.warning("You've got an argument assigned to both respondents and petitioners!")
 
         if not pet and not res:
-            log.warning("An argument was unable to be matched and will not be returned")
+            log.warning("Could not match argument: %s" % argument.group())
 
     arguments = {}
     arguments["petitioner"] = petitioner_arguments
@@ -198,7 +224,7 @@ def get_arguments_by_advocate(petitioners, respondents, argument_text):
 
 def get_statements_in_argument(argument_text, arguer_name):
     log = logging.getLogger('GET_STMTS_IN_ARG')
-    identifier_pattern = re.compile(r"([A-Z rc'\.]+):")
+    identifier_pattern = re.compile(r"([A-Z ierc'\.]{4,}):")
     statement_matches = identifier_pattern.finditer(argument_text)
 
     speakers = []
@@ -222,7 +248,7 @@ def get_statements_in_argument(argument_text, arguer_name):
         found = False
         for speaker in speakers:
             if speaker.last in statement.group():
-                # log.info("Found %s, assigned to %s" % (statement.group(), speaker))
+                #log.info("Found %s, assigned to %s" % (statement.group(), speaker))
                 processed_statement = argument_text[start:end].strip()
                 processed_statement = " ".join([line.strip()
                                                 for line in processed_statement.splitlines() if line.strip()])
@@ -238,6 +264,6 @@ def get_statements_in_argument(argument_text, arguer_name):
                 found = True
 
         if not found:
-            log.warning("Couldn't assign %s to a known speaker" % statement.group())
+            log.warning("Couldn't assign %s to a known speaker during this argument." % statement.group())
 
     return statements

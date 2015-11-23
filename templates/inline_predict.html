@@ -1,0 +1,20 @@
+<div class="prediction">
+	<center>
+	<h3>Predicted Winner: {{ winner }}</h3>
+	<h4>Confidence Level: {{ confidence_level }}%</h4>
+	<h4>
+		Actual Winner: {{ actual }}
+		<br><br>
+		{% if correct %}
+		<span class="label label-success">Correct Prediction</span>
+		{% else %}
+		<span class="label label-danger">Incorrect Prediction</span>
+		{% endif %}
+		{% if low_confidence %}
+		<span class="label label-warning">Low Confidence</span>
+		{% endif %}
+	</h4>
+</center>
+		
+		<hr>
+</div>
