@@ -194,10 +194,14 @@ def bar_chart_speaker(grouping_of_statements):
         "labels" : labels,
         "datasets": [{
             "label": "Words Spoken",
-            "fillColor": "rgba(151,187,205,0.5)",
-            "strokeColor": "rgba(151,187,205,0.8)",
-            "highlightFill": "rgba(151,187,205,0.75)",
+            "fillColor": "rgb(23,55,94)",
+            "strokeColor": "rgb(230,230,230)",
+            "highlightFill": "rgba(23,55,94,0.8)",
             "highlightStroke": "rgba(151,187,205,1)",
+            "scaleFontFamily": "'Lato', sans-serif",
+            "tooltipFontFamily": "'Lato', sans-serif",
+            "tooltipTitleFontFamily": "'Lato', sans-serif",
+            "pointLabelFontFamily": "'Lato', sans-serif",
             "data": data
         }]
     }

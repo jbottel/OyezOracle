@@ -16,3 +16,67 @@ body {
 .theme-showcase .navbar .container {
   width: auto;
 }
+
+body{ 
+background-color: rgb(238,238,238);
+}
+
+h2,h1 {
+	background-color: rgb(23,55,94);
+	text-align: center;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	color: white;
+	font-family: 'Lato', sans-serif;
+	font-weight: 300;
+	text-transform: upppercase;
+	letter-spacing: 3px;
+}
+
+
+body {
+	font-family: 'Lato', sans-serif;
+	font-family: 'Merriweather', serif;
+}
+
+.navbar {
+}
+.navbar a {
+}
+
+.list-group-item {
+	background-color: rgba(23,55,94,0.03);
+	border-bottom: dotted 2px rgb(192,80,77);
+}
+
+.panel-heading {
+	font-weight: bold;
+}
+
+.panel-body {
+	background-color: rgba(23,55,94,0.03);
+}
+
+em {
+	color: rgb(192,80,77);
+	font-weight: bold;
+	font-style: normal;
+}
+
+.bottom {
+	border-bottom :none;
+}
+
+h3, h4, h5 {
+margin-top: 30px;
+margin-bottom: 10px;
+}
+
+h4, h5 {
+font-weight: bold;
+}
+
+h3.top {
+margin-top: 0px;
+}
+

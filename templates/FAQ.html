@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+			<link href='https://fonts.googleapis.com/css?family=Lato:300:400' rel='stylesheet' type='text/css'>
+				<link href='https://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+    <link rel="icon" href="../../favicon.ico">
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <title>OyezOracle</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="/static/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/css/theme.css" rel="stylesheet">
+
+    <!-- highlightjs -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/github.min.css">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body role="document">
+      {% include 'navbar.html' %}
+      <div class="container theme-showcase" role="main">
+
+      
+      <div class="page-header">
+				<h2>FREQUENTLY ASKED QUESTIONS</h2>
+      </div>
+			<div class="row">
+					<div class="col-md-12">
+						<h5 class="top">Where does the name OyezOracle come from?</h4>
+						<p>At the beginning of each session of oral arguments, the Supreme Court comes into session with a traditional statement by the court marshal:</p>
+
+<blockquote style="font-style: italic; font-size: 100%;">"The Honorable, the Chief Justice and the Associate Justices of the Supreme Court of the United States. Oyez! Oyez! Oyez! All persons having business before the Honorable, the Supreme Court of the United States, are admonished to draw near and give their attention, for the Court is now sitting. God save the United States and this Honorable Court.</blockquote>
+<p>Oyez, pronounced Oh-YAY, is an interjection that has been used in courts in the US and UK for hundreds of years. It means roughly "hear ye." OyezOracle attempts to predict the future actions of the Supreme Court and is therefore the Oyez Oracle. </p>
+
+<h5>Does OyezOracle use liberal/conservative leanings of the Justices to make predictions?</h5>
+<p>Yes, this is the one piece of information it uses that is not necessarily found within the oral argument transcripts. OyezOracle uses a Martin-Quinn score to represent the justice's idealogical leanings and this is described in the <a href="/methods/identifying-features">Identifying Features</a> section.</p>
+
+<h5>How far back does OyezOracle's training go?</h5>
+<p>Training for the entire history of the court would be an extremely difficult process, and ultimately the justices do change over time, so OyezOracle focuses on the most recent iteration of the court, starting in the year 2010 with the introduction of the most junior justice, Elena Kagan.</p>
+
+<h5>How long is an oral argument?</h5>
+<p>Typically an argument is one hour long, and the court hears two of these arguments in a single day.Transcripts are usually available within a single day.</p>
+
+<h5>Why does it take so long to make a prediction?</h5>
+<p>First, OyezOracle parses all of the transcript sections and identifies who the speakers are. The longest part of the process is identifying the different parts of speech that a justice uses in their speech. After this, the quickest part, plugging of the scores into the network occurs.</p>
+					</div>
+				</div>
+		 
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+		<script>
+			$(document).ready(function() {
+					})
+				});
+			});
+
+$(document).ready(function(){    
+});
+		</script>
+  </body>
+</html>

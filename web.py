@@ -24,6 +24,34 @@ def json_predict(docket_number):
 def index():
     return render_template('index.html', **locals())
 
+@app.route("/methods/")
+def methods():
+    return render_template('methods.html', **locals())
+
+@app.route("/methods/parsing-the-transcript")
+def parsing():
+    return render_template('parsing.html', **locals())
+
+@app.route("/methods/identifying-features")
+def features():
+    return render_template('identifying.html', **locals())
+
+@app.route("/methods/network-training")
+def training():
+    return render_template('training.html', **locals())
+
+@app.route("/FAQ")
+def faq():
+    return render_template('FAQ.html', **locals())
+
+@app.route("/results")
+def results():
+    return render_template('results.html', **locals())
+
+@app.route("/references")
+def refs():
+    return render_template('references.html', **locals())
+
 @app.route("/predict/<docket_number>")
 def predict(docket_number):
     info = scdb.get_case_info(docket_number)
@@ -33,7 +61,10 @@ def predict(docket_number):
 def inline_predict(docket_number):
     info = scdb.get_case_info(docket_number)
     result = predict_case(docket_number)
-    if result == 1:
+    resultint = int(round(result))
+    if resultint > 1:
+	resultint = 1
+    if resultint == 1:
         winner = "Petitioner"
     else:
         winner = "Respondent"
@@ -66,4 +97,4 @@ def bar_chart_data(docket_number):
     return {}
 
 if __name__ == '__main__':
-    app.run(debug=app.config["DEBUG"], host='0.0.0.0')
+    app.run(debug=app.config["DEBUG"], host='0.0.0.0',threaded=True)

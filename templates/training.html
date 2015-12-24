@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+			<link href='https://fonts.googleapis.com/css?family=Lato:300:400' rel='stylesheet' type='text/css'>
+				<link href='https://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+    <link rel="icon" href="../../favicon.ico">
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <title>OyezOracle</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="/static/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/css/theme.css" rel="stylesheet">
+
+    <!-- highlightjs -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/github.min.css">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body role="document">
+      {% include 'navbar.html' %}
+    <div class="container theme-showcase" role="main">
+
+      
+      <div class="page-header">
+				<h2>NEURAL NETWORK TRAINING</h2>
+      </div>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="panel panel-default">
+						<div class="panel-heading">Neural Network Training<br>Jump to Section</div>
+						<div class="panel-body">
+						<p><a href="#neural">Using a Neural Network</a></p>
+						<p><a href="#network">Network Structure</a></p>
+						<p><a href="#training">Training</a></p>
+						</div>
+					</div>
+				</div>
+					<div class="col-md-8">
+					<a name="neural"></a>
+					<h3 class="top">Using a Neural Network</h3>
+							<p>A neural network is a "brain" of sorts. Your brain takes inputs -- tastes, smells, sights, etc, and inteprets them in a way that you understand everything around you. OyezOracle works the same way. The inputs (see the <a href="/methods/identifying-features">identifying features</a> page) are inputs into a brain which eventually inteprets a simple concept -- a leaning towards either the <em>petitioner</em> or the <em>respondent</em>.</p> 
+
+<p>For more on artificial neural networks, Wikipedia has a great <a href="https://en.wikipedia.org/wiki/Artificial_neural_network">article</a> that does a great job of describing their use across various fields and for various purposes.</p>
+
+<a name="tech"></a>
+<h3>Technical Details</h3>
+<p>OyezOracle's neural network is implemented with the assistance of PyBrain, a modular machine learning library for Python. </p>
+
+<a name="network"></a>
+<h4>Network Structure</h4>
+<p>In total, 775 scores enter the network as inputs. There are two "hidden layers" and the output is a simple number between 0 and 1. If the number is closer to 1 than it is to 0, than the petitioner is the winner. If closer to 0, the winner is the respondent. Some level of "surety" can be deduced by the closeness of the output to one of the two numbers.</p>
+
+<p>The 775 codes are made up of 86 features identified for each justice from the case (see the <a href="/methods/identifying-features">features</a> page) and one code from the Supreme Court Databse (SCDB), identifying which ideological leaning the petitioner's side represents. In predictions for future cases, this variable is specified by the user and not by the SCDB.</p> 
+
+<p style="text-align: center;"><img src="/static/network.png"></p>
+
+<p>The network's hidden layers are both Softmax layers. The trained layer is stored in an XML format provided by PyBrain, which can be seen in the <a href="https://github.com/jbottel/OyezOracle/blob/master/second_net.xml">source code</a>.</p>
+
+<a name="training"></a>
+<h4>Training</h4>
+
+<p>In order to train the network, the parser and scorer were run multiple times on a set of 280 transcripts ranging from 2010-2015. Additionally, we use the Supreme Court Database (SCDB) to determine the winning side for each case to feed the proper otuput to the network.</p>
+
+<p>A single training instance is scored by the parser/scorer as seen below:</p>
+
+<pre><code class="python">[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.037, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 16, 1, 0, 0, 11, 20, 3, 0, 0, 6, -1.729, 169, 22, 0, 33, 2, 12, 16, 1, 1, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 11, 10, 12, 11, 8, 11, 0, 0, 0, 0, 11, 0, 6, 0, 0, 0, 0, 4, 0, 0, 0, 2, -2.461, 22, 2, 0, 9, 0, 4, 6, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 3, 1, 0, 7, 2, 2, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, -1.913, 25, 9, 0, 10, 0, 1, 2, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 3, 4, 2, 1, 2, 3, 0, 0, 0, 0, 11, 0, 2, 0, 0, 0, 1, 5, 0, 0, 0, 2, -0.15, 38, 3, 0, 12, 0, 4, 8, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 5, 6, 1, 2, 3, 3, 0, 0, 0, 0, 13, 0, 1, 2, 0, 0, 2, 9, 1, 0, 0, 4, 0.869, 57, 10, 0, 15, 0, 2, 10, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 5, 3, 2, 2, 7, 3, 0, 0, 0, 0, 14, 0, 3, 0, 0, 0, 7, 16, 3, 0, 0, 9, 1.583, 88, 13, 0, 26, 0, 9, 16, 3, 1, 0, 0, 1, 0, 20, 0, 0, 0, 0, 0, 0, 12, 6, 11, 3, 8, 5, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 1, -2.354, 23, 4, 0, 2, 0, 3, 9, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3.24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]</code></pre>
+
+The parser and scorer compile all of the transcripts into a set of scores as seen above. These training instances are introducted to PyBrain to train the network.
+</div>
+				</div>
+		 
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+		<script>
+			$(document).ready(function() {
+					})
+				});
+			});
+
+$(document).ready(function(){    
+});
+		</script>
+  </body>
+</html>
